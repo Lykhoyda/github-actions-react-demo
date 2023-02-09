@@ -1,0 +1,35 @@
+name: Lint, Test & Deploy
+on: [push, workflow_dispatch]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Run linter
+        uses: npm run lint
+  test:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3 # downlaod the code
+      - name: Install dependencies
+        run: npm ci
+      - name: run tests
+        run: npm run test
+  deploy:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Build project
+        run: npm run build
+      - name: Deploy
+        run: echo "Deploying ..."
+

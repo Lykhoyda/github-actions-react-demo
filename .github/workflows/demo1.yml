@@ -1,0 +1,23 @@
+name: Lint, Test & Deploy
+on: 
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Run linter
+        uses: npm run lint
+      - name: run tests
+        run: npm run test
+      - name: Build project
+        run: npm run build
+      - name: Deploy
+        run: echo "Deploying ..."
