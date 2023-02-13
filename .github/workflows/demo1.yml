@@ -5,13 +5,10 @@ on:
     branches: [main]
   workflow_dispatch:
   push:
-    branches: 
+    branches:
       - main
-      - dev-* 
+      - dev-*
       - feat/**
-    paths: ['src/test/**']
-    paths-ignore: [".github/**", "docs/**", "README.md"]
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -36,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build
-          path: | 
+          path: |
             dist
             package.json
 
