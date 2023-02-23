@@ -2,6 +2,7 @@ import MainContent from './components/MainContent';
 import logo from './assets/images/logo.png';
 
 function App() {
+  console.log(TEST, process.env.DB_NAME);
   return (
     <>
       <header>
