@@ -1,4 +1,4 @@
-name: Conditional testing & Generating report
+name: Test
 on:
   pull_request:
     types: [opened, synchronize, reopened]
