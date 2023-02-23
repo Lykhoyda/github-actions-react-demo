@@ -1,4 +1,4 @@
-name: Global Variables
+name: Conditional testing & Generating report
 on:
   pull_request:
     types: [opened, synchronize, reopened]
