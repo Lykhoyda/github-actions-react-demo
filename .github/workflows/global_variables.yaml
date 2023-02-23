@@ -1,4 +1,4 @@
-name: Lint, Test & Deploy
+name: Global Variables
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -11,6 +11,7 @@ on:
       - feat/**
 jobs:
   output:
+    environment: TEST
     env:
       DB_NAME: ${{ secrets.DB_NAME }}
     runs-on: ubuntu-latest

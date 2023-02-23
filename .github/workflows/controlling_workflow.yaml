@@ -1,0 +1,76 @@
+name: Lint, Test & Deploy
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev-*
+      - feat/**
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v3
+      - name: Cache dependendies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        run: npm ci
+      - name: run tests
+        id: run-test
+        run: npm run test
+      - name: Upload test report
+        if: failure() && steps.run-test.outcome == 'failure'
+
+        uses: actions/upload-artifact@v3
+        with: 
+          name: test-report
+          path: test.json
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    outputs:
+      script-file: ${{ steps.publish.outputs.script-file }}
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v3
+      - name: Cache dependendies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Build project
+        run: npm run build
+      - name: Publish Js filename
+        id: publish
+        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';'
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: dist
+          # path: |
+          #   dist
+          #   package.json
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Get Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+      - name: Output contents
+        run: ls
+      - name: Output contents
+        run: echo ${{ needs.build.outputs.script-file }}
+      - name: Deploy project
+        run: echo "Deploying to production"
